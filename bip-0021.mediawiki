@@ -39,12 +39,14 @@ Elements of the query component may contain characters outside the valid range. 
  bitcoinurn     = "bitcoin:" bitcoinaddress [ "?" bitcoinparams ]
  bitcoinaddress = *base58
  bitcoinparams  = bitcoinparam [ "&" bitcoinparams ]
- bitcoinparam   = [ amountparam / labelparam / messageparam / otherparam / reqparam ]
+ bitcoinparam   = [ amountparam / labelparam / messageparam / otherparam / norbfparam / reqparam ]
  amountparam    = "amount=" *digit [ "." *digit ]
  labelparam     = "label=" *qchar
  messageparam   = "message=" *qchar
  otherparam     = qchar *qchar [ "=" *qchar ]
+ norbfparam     = "norbf=" *bit 
  reqparam       = "req-" qchar *qchar [ "=" *qchar ]
+
 
 Here, "qchar" corresponds to valid characters of an RFC 3986 URI query component, excluding the "=" and "&" characters, which this BIP takes as separators.
 
@@ -57,6 +59,7 @@ The scheme component ("bitcoin:") is case-insensitive, and implementations must 
 *message: message that describes the transaction to the user ([[#Examples|see examples below]])
 *size: amount of base bitcoin units ([[#Transfer amount/size|see below]])
 *paycode: payment code (BIP-47)
+*norbf: specify that transactions should not opt-into full-RBF (BIP-125)
 *(others): optional, for future extensions
 
 ==== Transfer amount/size ====
@@ -100,7 +103,7 @@ Please see the BNF grammar above for the normative syntax.
 
 [foo] means optional, &lt;bar&gt; are placeholders
 
- <nowiki>bitcoin:<address>[?amount=<amount>][?label=<label>][?message=<message>]</nowiki>
+ <nowiki>bitcoin:<address>[?amount=<amount>][?label=<label>][?message=<message>][?norbf=0|1]</nowiki>
 
 === Examples ===
 
@@ -115,6 +118,9 @@ Request 20.30 BTC to "Luke-Jr":
 
 Request 50 BTC with message:
  bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W?amount=50&label=Luke-Jr&message=Donation%20for%20project%20xyz
+
+Request 50 BTC with no rbf specified:
+ bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W?amount=50&label=Luke-Jr&norbf=1
 
 Some future version that has variables which are (currently) not understood and required and thus invalid:
  bitcoin:175tWpb8K1S7NmH4Zx6rewF9WQrcZv245W?req-somethingyoudontunderstand=50&req-somethingelseyoudontget=999
